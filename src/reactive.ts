@@ -13,6 +13,22 @@ export function effect(eff: Effect) {
 	activeEffect = null
 }
 
+export function ref<T>(raw: T) {
+	const r = {
+		get value() {
+			track(r, 'value')
+			return raw
+		},
+
+		set value(newVal) {
+			raw = newVal
+			trigger(r, 'value')
+		},
+	}
+
+	return r
+}
+
 export function reactive<T extends object>(target: T) {
 	return new Proxy<T>(target, {
 		get(target, key, receiver) {
