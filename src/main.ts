@@ -5,7 +5,7 @@ import { setupCounter } from './counter.ts'
 // import './basics-primitive.ts'
 // import './basics-objects.ts'
 // import './proxy.ts'
-import './reactive.ts'
+import './playground.ts'
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <div>

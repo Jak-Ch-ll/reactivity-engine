@@ -5,21 +5,18 @@ type Effect = () => void
 
 const targetMap: TargetMap = new WeakMap()
 
-const product = reactive({ price: 5, quantity: 2 })
-let total = 0
+let activeEffect: Effect | null = null
 
-const effect = () => (total = product.price * product.quantity)
+export function effect(eff: Effect) {
+	activeEffect = eff
+	activeEffect()
+	activeEffect = null
+}
 
-effect()
-console.log('total', total)
-
-product.quantity = 4
-console.log('total', total)
-
-function reactive<T extends object>(target: T) {
+export function reactive<T extends object>(target: T) {
 	return new Proxy<T>(target, {
 		get(target, key, receiver) {
-			track(target, key, effect)
+			track(target, key)
 			return Reflect.get(target, key, receiver)
 		},
 
@@ -37,7 +34,9 @@ function reactive<T extends object>(target: T) {
 	})
 }
 
-function track(target: object, key: string | number | symbol, effect: Effect) {
+function track(target: object, key: string | number | symbol) {
+	if (!activeEffect) return
+
 	let depsMap = targetMap.get(target)
 	if (!depsMap) {
 		depsMap = new Map()
@@ -50,7 +49,7 @@ function track(target: object, key: string | number | symbol, effect: Effect) {
 		depsMap.set(key, dep)
 	}
 
-	dep.add(effect)
+	dep.add(activeEffect)
 }
 
 function trigger(target: object, key: string | number | symbol) {
@@ -60,5 +59,3 @@ function trigger(target: object, key: string | number | symbol) {
 		dep.forEach((effect) => effect())
 	}
 }
-
-export {}
