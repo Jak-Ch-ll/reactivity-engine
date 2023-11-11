@@ -4,6 +4,7 @@ import viteLogo from '/vite.svg'
 import { setupCounter } from './counter.ts'
 import './basics-primitive.ts'
 import './basics-objects.ts'
+import './proxy.ts'
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <div>
