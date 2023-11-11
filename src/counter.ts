@@ -1,9 +1,11 @@
+import { effect, ref } from './reactive'
+
 export function setupCounter(element: HTMLButtonElement) {
-  let counter = 0
-  const setCounter = (count: number) => {
-    counter = count
-    element.innerHTML = `count is ${counter}`
-  }
-  element.addEventListener('click', () => setCounter(counter + 1))
-  setCounter(0)
+	let counter = ref(0)
+
+	effect(() => {
+		element.innerHTML = `count is ${counter.value}`
+	})
+
+	element.addEventListener('click', () => counter.value++)
 }
