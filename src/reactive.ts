@@ -13,7 +13,9 @@ export function effect(eff: Effect) {
 	activeEffect = null
 }
 
-export function ref<T>(raw: T) {
+export function ref<T>(): { value: T | undefined }
+export function ref<T>(raw: T): { value: T }
+export function ref<T>(raw?: T) {
 	const r = {
 		get value() {
 			track(r, 'value')
@@ -48,6 +50,16 @@ export function reactive<T extends object>(target: T) {
 			return result
 		},
 	})
+}
+
+export function computed<T>(callback: () => T) {
+	let result = ref<T>()
+
+	effect(() => {
+		result.value = callback()
+	})
+
+	return result as { readonly value: T }
 }
 
 function track(target: object, key: string | number | symbol) {
